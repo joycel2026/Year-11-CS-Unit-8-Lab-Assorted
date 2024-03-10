@@ -1,4 +1,7 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Assorted {
@@ -14,7 +17,13 @@ public class Assorted {
      *         integer data types.
      */
     public static int findSum(List<?> list) {
-        return 0;
+        int total = 0;
+        for (int i = 0; i<list.size(); i++)
+        {
+            int value = Integer.parseInt(list.get(i).toString());
+            total = total + value;
+        }
+        return total;
     }
 
     /**
@@ -26,7 +35,13 @@ public class Assorted {
      * @return a list containing integers only.
      */
     public static List<Integer> filterStrings(List list) {
-        return null;
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (Object obj: list){
+            if (obj instanceof Integer){
+                result.add((Integer)obj);
+            }
+        }
+        return result;
     }
 
     /**
@@ -39,7 +54,13 @@ public class Assorted {
      *         e.g. ["1: a", "2: b", "3: c"]
      */
     public static List<String> lineNumbering(List<String> list) {
-        return null;
+        ArrayList<String> result = new ArrayList<String>();
+        for (int i = 0; i<list.size();i++){
+            int number = i+1;
+            String s = number+": "+list.get(i);
+            result.add(i, s);
+        }
+        return result;
     }
 
     /**
@@ -61,7 +82,13 @@ public class Assorted {
      * @return the number of people who are still on the bus after the last stop.
      */
     public static int busStop(List<Integer[]> list) {
-        return 0;
+        int remainingPeople = 0;
+        for (Integer[] pair : list) {
+            int getOn = pair[0];
+            int getOff = pair[1];
+            remainingPeople += getOn - getOff;
+        }
+        return remainingPeople;
     }
 
     /**
@@ -73,7 +100,16 @@ public class Assorted {
      *         Eg: [0, 0, 0, 1] is treated as 0001 which is the binary representation of 1.
      */
     public static int toBinary(List<Integer> list) {
-        return 0;
+        int decimal = 0;
+        for (int i = 0; i<list.size(); i++){
+            int binary = list.get(i);
+            int digit = 1;
+            for (int j = 1; j<list.size()-i;j++){
+                digit *= 2;
+            }
+            decimal = decimal + (binary*digit);
+        }
+        return decimal;
     }
 
     /**
@@ -92,7 +128,17 @@ public class Assorted {
      *              subtractList([1,2,2,2,3], [2]) returns [1,3]
      */
     public static List<Integer> subtractList(List<Integer> listA, List<Integer> listB) {
-        return null;
+        List<Integer> listC = new ArrayList<Integer>();
+        int index = 0;
+        for (Integer a : listA){
+            for (Integer b : listB){
+                if (a!=b){
+                    listC.add(index, a);
+                    index +=1;
+                }
+            }
+        }
+        return listC;
     }
 
     /**
@@ -106,7 +152,19 @@ public class Assorted {
      *         integers remain in their original position.
      */
     public static List<Integer> sortOdd(List<Integer> list) {
-        return null;
+        List<Integer> oddIndex = new ArrayList<Integer>();
+        List<Integer> oddNumbers = new ArrayList<Integer>();
+        for (int i = 0; i<list.size();i++){
+            if ((list.get(i)%2)!=0){
+                oddIndex.add(i);
+                oddNumbers.add(list.get(i));
+            }
+        }
+        Collections.sort(oddNumbers);
+        for (int j = 0; j<oddIndex.size();j++){
+            list.set(oddIndex.get(j), oddNumbers.get(j));
+        }
+        return list;
     }
 
     /**
@@ -131,7 +189,35 @@ public class Assorted {
      *              uniqueNumber(1,100) returns [1,2,3,4,5,6,7,8,9,89]
      */
     public static List<Integer> uniqueNumber(int lowerBound, int upperBound) {
-        return null;
+        List<Integer> results = new ArrayList<Integer>();
+        for(int i = lowerBound; i<=upperBound; i++){
+            int calculation = 0;
+            int digits = 1;
+            int tens = i/10;
+            while (tens>0){
+                tens = tens/10;
+                digits ++;
+            }
+            int exponent = 1;
+            int previous = 0;
+            while (digits>=1){
+                exponent = exponent*10;
+                int addition = ((i%exponent)-previous)/(exponent/10);
+                int number = ((i%exponent)-previous)/(exponent/10);
+                int powerTimes = digits;
+                while (powerTimes>1){
+                    addition = addition*number;
+                    powerTimes--;
+                }
+                calculation = calculation + addition;
+                previous = i%exponent;
+                digits = digits-1;
+            }
+            if (calculation==i){
+                results.add(i);
+            }
+        }
+        return results;
     }
 
     /**
@@ -154,7 +240,17 @@ public class Assorted {
      *              filterNTimes([20,37,20,21], 1) returns [20,37,21]
      */
     public static List<Integer> filterNTimes(List<Integer> list, int n) {
-        return null;
+        for (int i = 0;i<list.size();i++){
+            int times = 0;
+            for (int j=0;j<i;j++){
+                if (list.get(i)==list.get(j)) times++;
+            }
+            if (times==n){
+                list.remove(i);
+                i--;
+            }
+        }
+        return list;
     }
 
     /**
@@ -191,8 +287,107 @@ public class Assorted {
      *              ["WEST", "WEST"]
      */
     public static List<String> wildWest(List<String> directions) {
-        return null;
+        boolean change = false;
+        boolean changing = true;
+        List <Integer> remove = new ArrayList<>();
+        String lastDir = "";
+        String dir;
+        while (changing){
+            changing = false;
+            for (int i = 0; i<directions.size();i++){
+                dir = directions.get(i);
+                if (dir.equals("NORTH") && lastDir.equals("SOUTH")){
+                    changing = true;
+                    change = true;
+                }
+                else if(dir.equals("SOUTH") && lastDir.equals("NORTH") ){
+                    changing = true;
+                    change = true;
+                }
+                else if(dir.equals("WEST") && lastDir.equals("EAST")){
+                    changing = true;
+                    change = true;
+                }
+                else if(dir.equals("EAST") && lastDir.equals("WEST")){
+                    changing = true;
+                    change = true;
+                }
+                if(change){
+                    remove.add(0,i-1);
+                    remove.add(0,i);
+                    change = false;
+                }
+                lastDir = dir;
+            }
+            if(remove.isEmpty()){
+                break;
+            }
+            for(int i : remove){
+                directions.remove(i);
+            }
+            if(directions.isEmpty()){
+                break;
+            }
+            remove.clear();
+        }
+        return directions;
     }
+
+    /**
+     *         int west = 0;
+     *         int east = 0;
+     *         int north = 0;
+     *         int south = 0;
+     *         for (String direction : directions){
+     *             if (direction.equals("WEST")){
+     *                 west++;
+     *             }if (direction.equals("EAST")){
+     *                 east++;
+     *             }if (direction.equals("NORTH")){
+     *                 north++;
+     *             }if (direction.equals("SOUTH")){
+     *                 south++;
+     *             }
+     *         }
+     *         int wECommon = 0;
+     *         int nSCommon = 0;
+     *         if (west>=east){
+     *             wECommon = east;
+     *         } else wECommon = west;
+     *         if (north>=south){
+     *             nSCommon = south;
+     *         }nSCommon = north;
+     *         int eWCommon = wECommon;
+     *         int sNCommon = nSCommon;
+     *         for (int i =0; i<directions.size();i++){
+     *             while (wECommon>0){
+     *                 if (directions.get(i).equals("WEST")){
+     *                     directions.remove(i);
+     *                     wECommon--;
+     *                 }
+     *             }
+     *             while (eWCommon>0){
+     *                 if (directions.get(i).equals("EAST")){
+     *                     directions.remove(i);
+     *                     eWCommon--;
+     *                 }
+     *             }
+     *             while (nSCommon>0){
+     *                 if (directions.get(i).equals("NORTH")){
+     *                     directions.remove(i);
+     *                     nSCommon--;
+     *                 }
+     *             }
+     *             while (sNCommon>0){
+     *                 if (directions.get(i).equals("SOUTH")){
+     *                     directions.remove(i);
+     *                     sNCommon--;
+     *                 }
+     *             }
+     *         }
+     *         return directions;
+     */
+
 
     /**
      * Challenge 11
@@ -215,6 +410,35 @@ public class Assorted {
      *              queueTime([2,3,10], 2) returns 12
      */
     public static int queueTime(List<Integer> queue, int tillsOpen) {
-        return 0;
+        int[] till = new int[tillsOpen];
+        int time = 0;
+        int index = 0;
+        boolean finish = true;
+        Arrays.fill(till, 0);
+        while (true){
+            for (int i = 0; i<till.length; i++){
+                if (till[i]==0){
+                    if (index<queue.size()){
+                        till[i]=queue.get(index);
+                        index++;
+                        till[i]--;
+                    }
+                } else till[i]--;
+            }
+            time++;
+            for (int i:till){
+                if (i!=0){
+                    finish = false;
+                }
+            }
+            if(index < queue.size()){
+                finish = false;
+            }
+            if(finish){
+                break;
+            }
+            finish = true;
+        }
+        return time;
     }
 }
